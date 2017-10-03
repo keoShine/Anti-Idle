@@ -1,0 +1,56 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Oct  3 11:18:54 2017
+
+@author: Keo
+"""
+
+import numpy as np
+
+#Manually entered info, will update when I have different armor sets
+Attack_Speed_Mult = 4.40
+Ally_Speed = 0
+Ally_Percent = 0
+Ally_DH = 0
+
+#Calculate the ATT Speed and Double Hit for s = Weapon Speed, b = Booster Level, d = DH Level
+def Speed_Calc(s, b, d):
+    Booster_Mult = 1 + 0.02*b + Ally_Percent
+    DH_Adder = np.round(0.015*d, 2) + Ally_DH
+    return [np.round(np.minimum(np.floor(Booster_Mult*(s*Attack_Speed_Mult + Ally_Speed)), 25), 0),
+            np.round(np.maximum(np.minimum(np.round((Booster_Mult*(s*Attack_Speed_Mult + Ally_Speed) - 25)/100 + DH_Adder, 2), 0.95), 0), 3)]
+
+#Calculate the SP Usage for b = Booster Level, d = DH Level
+def SP_Usage(b, d):
+    SP = 0
+    if b < 10:
+        SP = SP + b*(b+1)/2
+    else:
+        SP = SP + 55 + (b - 10)*10
+    if d < 10:
+        SP = SP + d*(d+1)/2
+    else:
+        SP = SP + 55 + (d - 10)*10
+    return SP
+
+#Find the maximum level of DH necessary for each level of Booster, then print the lowest SP Usage required
+def Minmax(attack_speed):
+    i = 0
+    j = 0
+    Values = []
+    Skills = []
+
+    while i <= 40:
+        while j <= 30:
+            c = Speed_Calc(attack_speed, i, j)
+            s = SP_Usage(i, j)
+            if c[1] >= 0.95:
+                Values.append([s])
+                Skills.append([i, j])
+                j = 0
+                break
+            else:
+                j = j + 1
+        i = i + 1
+                
+    print(Skills[np.argmin(Values)])
