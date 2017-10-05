@@ -36,11 +36,11 @@ def SP_Usage(b, d):
 #Find the maximum level of DH necessary for each level of Booster, then print the lowest SP Usage required
 def Minmax(attack_speed):
     i = 0
-    j = 0
     Values = []
     Skills = []
 
     while i <= 40:
+        j = 0
         while j <= 30:
             c = Speed_Calc(attack_speed, i, j)
             s = SP_Usage(i, j)
